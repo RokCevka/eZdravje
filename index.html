@@ -10,9 +10,51 @@
   <script src="knjiznice/js/jquery-2.2.3.min.js"></script>
   <script src="knjiznice/js/bootstrap.min.js"></script>
   <script src="knjiznice/js/koda.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {packages: ['corechart', 'bar']});
+      google.charts.setOnLoadCallback(drawMultSeries);
+
+      function drawMultSeries() {
+        var data = google.visualization.arrayToDataTable([
+          ['Pacient', 'Višina', 'Teža', 'Telesna temperatura', 'Krvni tlak', { role: 'style' } ],
+          ['Matic Radman', 179, 77, 36, 120, 'stroke-width: 10;'],
+          ['Miha Zadnik', 188, 110, 36.6, 122, 'stroke-width: 10;'],
+          ['Michael Kartini', 169, 61, 37.1, 110, 'stroke-width: 10;'],
+        ]);
+  
+        var options = {
+          title: 'Grafični prikaz pacientovih podatkov',
+          chartArea: {width: '70%', height: '90%'},
+          hAxis: {
+            minValue: 0
+          },
+          vAxis: {
+            title: 'Pacient'
+          }
+        };
+        var chart = new google.visualization.BarChart(document.getElementById('graf'));
+        chart.draw(data, options);
+      }
+    </script>
+	<style>
+		body {padding: 10px;}
+	  .btn {margin-top: 10px;}
+		.obvestilo {margin-left:10px;}
+		.majhna-ikona {font-size:60%; margin-left:10px}
+    html, body {
+        height: 500px;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 450px;
+        width: 900px;
+      }
+
+	</style>
 </head>
 <body>
-
   <!-- ZAČETEK: Menujska vrstica na vrhu spletne strani -->
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -22,7 +64,7 @@
           <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <!-- ZAČETEK: Ime vaše aplikacije -->
-        <a class="navbar-brand" href="index.html">Za boljše zdravje</a>
+        <a class="navbar-brand" href="index.html">Pregled nad zdravjem</a>
         <!-- KONEC: Ime vaše aplikacije -->
       </div>
       <div class="collapse navbar-collapse" id="menujska-vrstica">
@@ -37,14 +79,66 @@
   <!-- KONEC: Menujska vrstica na vrhu spletne strani -->
 
   <!-- ZAČETEK: Vsebina aplikacije -->
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 text-center">
-        <p class="lead"><strong>TO-DO</strong>: Na tem mestu implementirajte vašo aplikacijo.</p>
-      </div>
-    </div>
-  </div>
-  <!-- KONEC: Vsebina aplikacije -->
+ <div class="page-header"><h2></h2></div>
+		<div class="row">
+			<div class="col-lg-6 col-md-6 col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-lg-8 col-md-8 col-sm-8"><b>Kreiraj EHR zapis</b> za novega bolnika</div>
+							<div class="col-lg-4 col-md-4 col-sm-4"><select class="form-control input-sm" id="preberiPredlogoBolnika"><option></option><option value="Matic,Radman,1982-12-02T23:55">Matic Radman</option><option value="Miha,Zadnik,1994-12-10T00:34">Miha Zadnik</option><option value="Michael,Kartini,1963-03-11T18:30">Michael Kartini</option></select></div>
+						</div>
+					</div>
+					<div class="panel-body">
+						<span class="label label-default">Ime</span><input id="kreirajIme" type="text" class="form-control input-mini" placeholder="Ime">
+						<span class="label label-default">Priimek</span><input id="kreirajPriimek" type="text" class="form-control" placeholder="Priimek">
+						<span class="label label-default">Datum rojstva</span><input id="kreirajDatumRojstva" type="text" class="form-control" placeholder="1957-03-10T09:08">
+						<button type="button" class="btn btn-primary btn-xs" onclick="kreirajEHRzaBolnika()">Dodaj osnovne podatke o bolniku</button><span id="kreirajSporocilo"></span>
+				  	</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-md-6 col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-lg-8 col-md-8 col-sm-8"><b>Preberi EHR zapis</b> obstoječega bolnika</div>
+							<div class="col-lg-4 col-md-4 col-sm-4"><select class="form-control input-sm" id="preberiObstojeciEHR"><option value=""><option value="cddf2cbc-74ab-414a-9230-7dfb0fc55818">Matic Radman</option></option><option value="fddd9ad8-39f0-4494-985c-797de46a33d5">Miha Zadnik</option><option value="e94cb1d8-2a4f-4094-be67-46f7777e2677">Mihael Kartini</option></select></div>
+						</div>
+					</div>
+					<div class="panel-body">
+						<span class="label label-default">EHR ID</span><input id="preberiEHRid" type="text" class="form-control input-mini" placeholder="7b661e12-3a98-21ad-c29e-2dc9f5a3d885">
+						<button type="button" class="btn btn-primary btn-xs" onclick="preberiEHRodBolnika()">Preberi osnovne podatke o bolniku</button><span id="preberiSporocilo"></span>
+				  	</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-6 col-md-6 col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-lg-8 col-md-8 col-sm-8"><b>Vnos</b> meritve <b>vitalnih znakov</b> bolnika</div>
+							<div class="col-lg-4 col-md-4 col-sm-4"><select class="form-control input-sm" id="preberiObstojeciVitalniZnak"><option value=""></option><option value="cddf2cbc-74ab-414a-9230-7dfb0fc55818|2016-12-02T15:55|179|77|36|120">Matic Radman</option><option value="fddd9ad8-39f0-4494-985c-797de46a33d5|2015-05-11T08:44|188|110|36.6|122">Miha Zadnik</option><option value="e94cb1d8-2a4f-4094-be67-46f7777e2677|2016-03-03T13:12|169|61|37.2|110">Mihael Kartini</option></select></div>
+						</div>
+					</div>
+					<div class="panel-body">
+						<span class="label label-default">EHR ID</span><input id="dodajVitalnoEHR" type="text" class="form-control input-mini" placeholder="7b661e12-3a98-21ad-c29e-2dc9f5a3d885">
+						<span class="label label-default">Datum in ura</span><input id="dodajVitalnoDatumInUra" type="text" class="form-control input-mini" placeholder="2014-11-21T11:40Z">
+						<span class="label label-default">Telesna višina</span><div class="input-group"><input id="dodajVitalnoTelesnaVisina" type="text" class="form-control input-mini" placeholder="185"><span class="input-group-addon">cm</span></div>
+						<span class="label label-default">Telesna teža</span><div class="input-group"><input id="dodajVitalnoTelesnaTeza" type="text" class="form-control input-mini" placeholder="80.00"><span class="input-group-addon">kg</span></div>
+						<span class="label label-default">Telesna temperatura</span><div class="input-group"><input id="dodajVitalnoTelesnaTemperatura" type="text" class="form-control input-mini" placeholder="36.50"><span class="input-group-addon">°C</span></div>
+						<span class="label label-default">Sistolični krvni tlak</span><div class="input-group"><input id="dodajVitalnoKrvniTlakSistolicni" type="text" class="form-control input-mini" placeholder="118"><span class="input-group-addon">mm Hg</span></div>
+				  	</div>
+				</div>
+  		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <div id='graf'></div>
+		</div>
+			<div id="map"></div>
+  		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjzk9y4FkqZjYglbX6JRVl6YRyY-BOrHM&libraries=places&callback=initMap" async defer></script>
+			</div>
+	</div>
+
+	</body>
 
 </body>
 </html>
